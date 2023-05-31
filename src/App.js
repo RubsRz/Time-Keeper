@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Switch, Route ,Redirect} from 'react-router-do
 import Login from './components/login/login';
 import Register from './components/register/register';
 import Layout from './components/layout/layout';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.bundle.js';
+
 
 const App = () => {
   return (
