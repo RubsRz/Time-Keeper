@@ -6,7 +6,6 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    localStorage.removeItem('userId');
     // history.push('/login'); // Redirige a la página de inicio de sesión
     window.location.href = '/login'; // Redirige a la página de inicio de sesión
 
@@ -34,7 +33,7 @@ const Navbar = () => {
               <a className="nav-link" href="#">Contact</a>
             </li>
           </ul>
-          <button className="btn btn-danger ms-auto" onClick={handleLogout}>Cerrar sesión</button>
+          <button className="btn btn-danger ms-auto" onClick={handleLogout}>Log Out</button>
         </div>
       </div>
     </nav>

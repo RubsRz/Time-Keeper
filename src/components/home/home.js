@@ -10,8 +10,7 @@ const Home = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const userId = localStorage.getItem('userId');
-        const response = await axios.get(url+`/auth/user/${userId}`, {
+        const response = await axios.get(url+`/auth/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

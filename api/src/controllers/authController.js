@@ -18,6 +18,7 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insertar el nuevo usuario en la base de datos
+    //TODO: Falta hacer inserts con la informacion del usuario
     await pool.query('INSERT INTO users (email, password) VALUES (?, ?)', [email, hashedPassword]);
 
     res.status(201).json({ message: 'Usuario registrado exitosamente' });
@@ -44,9 +45,8 @@ const login = async (req, res) => {
 
     if (passwordMatch) {
       // Generar el token JWT
-      const token = jwt.sign({ email }, 'secret-key', { expiresIn: '24h' });
-      const userId = rows[0].iduser;
-      res.status(200).json({ token, userId });
+      const token = jwt.sign({ id: rows[0].iduser, email }, 'secret-key', { expiresIn: '1h' });
+      res.status(200).json({ token });
     } else {
       res.status(401).json({ message: 'Credenciales inválidas' });
     }
@@ -57,7 +57,8 @@ const login = async (req, res) => {
 };
 
 const getuser = async(req, res) =>{
-  const userId = req.params.id
+  console.log(req.user)
+
     try {
       const user = await pool.query(`SELECT
       u.iduser,
@@ -73,7 +74,7 @@ const getuser = async(req, res) =>{
       bosses b USING(iduser)
     WHERE
       u.iduser = ?;
-    `, [userId])
+    `, [req.user])
       res.status(200).json({ user });
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener los usuarios' });

@@ -9,11 +9,6 @@ import Home from './components/home/home';
 const AuthWrapper = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // const handleLogin = (token) => {
-  //   localStorage.setItem('token', token); // Guardar el token en el localStorage
-  //   setIsLoggedIn(true); // Establecer el estado isLoggedIn en true
-  // };
-
   useEffect(() => {
     // Verificar si el token está presente en localStorage
     const token = localStorage.getItem('token');

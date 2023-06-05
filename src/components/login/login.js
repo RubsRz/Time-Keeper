@@ -15,9 +15,7 @@ function Login({ setIsLoggedIn }) {
 
       if (response.status === 200) {
         const token = response.data.token; // Obtén el token de la respuesta del servidor
-        const userId = response.data.userId; // Obtén el token de la respuesta del servidor
         localStorage.setItem('token', token); // Almacena el token en localStorage
-        localStorage.setItem('userId', userId); // Almacena el token en localStorage
 
         setIsLoggedIn(true); // Inicio de sesión exitoso, establecer isLoggedIn en true
         // Otras acciones que desees realizar después del inicio de sesión exitoso
