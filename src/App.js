@@ -5,18 +5,21 @@ import Register from './components/register/register';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 import Home from './components/home/home';
+import Employees from './components/list/employees';
+import Notifications from './components/notifications/notifications';
+import Requests from './components/requests/requests';
 
 const AuthWrapper = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
     // Verificar si el token está presente en localStorage
     const token = localStorage.getItem('token');
 
-    if (token) {
-      setIsLoggedIn(true);
+    if (!token) {
+      setIsLoggedIn(false);
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <Router>
@@ -43,6 +46,15 @@ const AuthWrapper = () => {
         </Route>
         <Route exact path="/home">
           {isLoggedIn ? <Home /> : <Redirect to="/login" />}
+        </Route>
+        <Route exact path="/employees">
+          {isLoggedIn ? <Employees /> : <Redirect to="/login" />}
+        </Route>
+        <Route exact path="/notifications">
+          {isLoggedIn ? <Notifications /> : <Redirect to="/login" />}
+        </Route>
+        <Route exact path="/requests">
+          {isLoggedIn ? <Requests /> : <Redirect to="/login" />}
         </Route>
         <Route>
             <Redirect to="/" /> {/* Redirigir a la página de inicio si la ruta no existe */}
