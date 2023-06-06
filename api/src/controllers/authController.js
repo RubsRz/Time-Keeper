@@ -57,7 +57,7 @@ const login = async (req, res) => {
 };
 
 const getuser = async(req, res) =>{
-  console.log(req.user)
+  const iduser = req.user
 
     try {
       const user = await pool.query(`SELECT
@@ -74,7 +74,7 @@ const getuser = async(req, res) =>{
       bosses b USING(iduser)
     WHERE
       u.iduser = ?;
-    `, [req.user])
+    `, [iduser])
       res.status(200).json({ user });
     } catch (error) {
       res.status(500).json({ message: 'Error al obtener los usuarios' });
