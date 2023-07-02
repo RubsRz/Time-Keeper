@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
 import Navbar from '../general/navbar';
+import Aguinaldo from '../general/information/aguinaldo'
+import PrimaVacacional from '../general/information/primaVacacional'
+import Bonos from '../general/information/bonos'
+import Vacaciones from '../general/information/vacaciones'
+import VacacionesMatrimonio from '../general/information/vacacionesMatrimonio'
+import Imss from '../general/information/imss'
+import Afore from '../general/information/afore'
+import LicenciaMaternidad from '../general/information/licenciaMaternidad'
 
 function Information() {
   const [activeTab, setActiveTab] = useState('tab1');
@@ -25,12 +33,6 @@ function Information() {
             onClick={() => handleTabClick('tab2')}
           >
             Prima vacacional
-          </div>
-          <div
-            style={activeTab === 'tab3' ? styles.activeTab : styles.tab}
-            onClick={() => handleTabClick('tab3')}
-          >
-            Seguro médico
           </div>
           <div
             style={activeTab === 'tab4' ? styles.activeTab : styles.tab}
@@ -70,15 +72,14 @@ function Information() {
           </div>
         </div>
         <div style={styles.content}>
-          {activeTab === 'tab1' && <p>Contenido de la pestaña 1</p>}
-          {activeTab === 'tab2' && <p>Contenido de la pestaña 2</p>}
-          {activeTab === 'tab3' && <p>Contenido de la pestaña 3</p>}
-          {activeTab === 'tab4' && <p>Contenido de la pestaña 4</p>}
-          {activeTab === 'tab5' && <p>Contenido de la pestaña 5</p>}
-          {activeTab === 'tab6' && <p>Contenido de la pestaña 6</p>}
-          {activeTab === 'tab7' && <p>Contenido de la pestaña 7</p>}
-          {activeTab === 'tab8' && <p>Contenido de la pestaña 8</p>}
-          {activeTab === 'tab9' && <p>Contenido de la pestaña 9</p>}
+          {activeTab === 'tab1' && <Aguinaldo />}
+          {activeTab === 'tab2' && <PrimaVacacional />}
+          {activeTab === 'tab4' && <Bonos />}
+          {activeTab === 'tab5' && <Vacaciones />}
+          {activeTab === 'tab6' && <VacacionesMatrimonio />}
+          {activeTab === 'tab7' && <Imss />}
+          {activeTab === 'tab8' && <Afore />}
+          {activeTab === 'tab9' && <LicenciaMaternidad />}
         </div>
       </div>
     </>
