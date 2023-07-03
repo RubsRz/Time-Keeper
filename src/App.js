@@ -4,6 +4,7 @@ import Login from './components/login/login';
 import Register from './components/register/register';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
+import Information from './components/information/information';
 import Home from './components/home/home';
 
 const AuthWrapper = () => {
