@@ -21,17 +21,15 @@ const AuthWrapper = () => {
 
   return (
     <Router>
-      {/* Navbar */}
       <Route
         render={({ location }) => {
           if (location.pathname === '/login' || location.pathname === '/register') {
-            return null; // No mostrar el Navbar en las rutas de login y register
+            return null;
           }
           return <Navbar />;
         }}
       />
 
-      {/* Contenido */}
       <Switch>
         <Route exact path="/">
           <Redirect to="/login" />
@@ -40,7 +38,6 @@ const AuthWrapper = () => {
           {isLoggedIn ? (
             <Redirect to="/home" />
           ) : (
-            // Renderizar el componente Login si el usuario no ha iniciado sesión
             <Login setIsLoggedIn={setIsLoggedIn} />
           )}
         </Route>
@@ -48,37 +45,24 @@ const AuthWrapper = () => {
           {isLoggedIn ? (
             <Redirect to="/home" />
           ) : (
-            // Renderizar el componente Register si el usuario no ha iniciado sesión
             <Register setIsLoggedIn={setIsLoggedIn} />
           )}
         </Route>
         <Route exact path="/home">
-          {isLoggedIn ? (
-            // Renderizar el componente Home si el usuario ha iniciado sesión
-            <Home />
-          ) : (
-            <Redirect to="/login" />
-          )}
+          {isLoggedIn ? <Home /> : <Redirect to="/login" />}
         </Route>
         <Route exact path="/information">
-          {isLoggedIn ? (
-            // Renderizar el componente Home si el usuario ha iniciado sesión
-            <Information />
-          ) : (
-            <Redirect to="/login" />
-          )}
+          {isLoggedIn ? <Information /> : <Redirect to="/login" />}
         </Route>
         <Route>
-          <Redirect to="/" /> {/* Redirigir a la página de inicio si la ruta no existe */}
+          <Redirect to="/" />
         </Route>
-        {/* Otras rutas */}
       </Switch>
 
-      {/* Footer */}
       <Route
         render={({ location }) => {
           if (location.pathname === '/login' || location.pathname === '/register') {
-            return null; // No mostrar el Footer en las rutas de login y register
+            return null;
           }
           return <Footer />;
         }}
