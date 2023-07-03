@@ -18,7 +18,6 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insertar el nuevo usuario en la base de datos
-    //TODO: Falta hacer inserts con la informacion del usuario
     await pool.query('INSERT INTO users (email, password) VALUES (?, ?)', [email, hashedPassword]);
 
     res.status(201).json({ message: 'Usuario registrado exitosamente' });
@@ -34,7 +33,6 @@ const login = async (req, res) => {
   try {
     // Buscar al usuario en la base de datos
     const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
-
 
     if (rows.length === 0) {
       return res.status(401).json({ message: 'Credenciales inválidas' });
@@ -56,11 +54,12 @@ const login = async (req, res) => {
   }
 };
 
-const getuser = async(req, res) =>{
-  console.log(req.user)
+const getuser = async (req, res) => {
+  console.log(req.user);
 
-    try {
-      const user = await pool.query(`SELECT
+  try {
+    // Obtener información del usuario desde la base de datos
+    const user = await pool.query(`SELECT
       u.iduser,
       u.email,
       u.is_boss,
@@ -74,11 +73,11 @@ const getuser = async(req, res) =>{
       bosses b USING(iduser)
     WHERE
       u.iduser = ?;
-    `, [req.user])
-      res.status(200).json({ user });
-    } catch (error) {
-      res.status(500).json({ message: 'Error al obtener los usuarios' });
-    }
-}
+    `, [req.user]);
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener los usuarios' });
+  }
+};
 
 module.exports = { register, login, getuser };

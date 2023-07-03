@@ -10,7 +10,7 @@ const AuthWrapper = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Verificar si el token está presente en localStorage
+    // Verificar si el token está presente en localStorage al cargar el componente
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -36,17 +36,32 @@ const AuthWrapper = () => {
           <Redirect to="/login" />
         </Route>
         <Route exact path="/login">
-          {isLoggedIn ? <Redirect to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
+          {isLoggedIn ? (
+            <Redirect to="/home" />
+          ) : (
+            // Renderizar el componente Login si el usuario no ha iniciado sesión
+            <Login setIsLoggedIn={setIsLoggedIn} />
+          )}
         </Route>
         <Route exact path="/register">
-          {isLoggedIn ? <Redirect to="/home" /> : <Register setIsLoggedIn={setIsLoggedIn} />}
+          {isLoggedIn ? (
+            <Redirect to="/home" />
+          ) : (
+            // Renderizar el componente Register si el usuario no ha iniciado sesión
+            <Register setIsLoggedIn={setIsLoggedIn} />
+          )}
         </Route>
         <Route exact path="/home">
-          {isLoggedIn ? <Home /> : <Redirect to="/login" />}
+          {isLoggedIn ? (
+            // Renderizar el componente Home si el usuario ha iniciado sesión
+            <Home />
+          ) : (
+            <Redirect to="/login" />
+          )}
         </Route>
         <Route>
-            <Redirect to="/" /> {/* Redirigir a la página de inicio si la ruta no existe */}
-          </Route>
+          <Redirect to="/" /> {/* Redirigir a la página de inicio si la ruta no existe */}
+        </Route>
         {/* Otras rutas */}
       </Switch>
 
