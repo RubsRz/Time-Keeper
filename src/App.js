@@ -5,6 +5,7 @@ import Register from './components/register/register';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 import Home from './components/home/home';
+import Information from './components/information/information';
 
 const AuthWrapper = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -55,6 +56,14 @@ const AuthWrapper = () => {
           {isLoggedIn ? (
             // Renderizar el componente Home si el usuario ha iniciado sesión
             <Home />
+          ) : (
+            <Redirect to="/login" />
+          )}
+        </Route>
+        <Route exact path="/information">
+          {isLoggedIn ? (
+            // Renderizar el componente Home si el usuario ha iniciado sesión
+            <Information />
           ) : (
             <Redirect to="/login" />
           )}
