@@ -37,29 +37,31 @@ const App = () => {
 
   return (
     <Router>
-      <Switch>
-        <Route exact path="/login">
-          {isLoggedIn ? <Redirect to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
-        </Route>
-        <Route exact path="/register">
-          {isLoggedIn ? <Redirect to="/home" /> : <Register setIsLoggedIn={setIsLoggedIn} />}
-        </Route>
-        <PrivateRoute path="/" isLoggedIn={isLoggedIn}>
-          <Navbar />
-          <Switch>
-            <Route exact path="/home">
-              <Home />
-            </Route>
-            <Route exact path="/information">
-              <Information />
-            </Route>
-            <Route>
-              <Redirect to="/home" />
-            </Route>
-          </Switch>
-          <Footer />
-        </PrivateRoute>
-      </Switch>
+      <div style={{ height: '100vh', overflowY: 'auto' }}>
+        <Switch>
+          <Route exact path="/login">
+            {isLoggedIn ? <Redirect to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
+          </Route>
+          <Route exact path="/register">
+            {isLoggedIn ? <Redirect to="/home" /> : <Register setIsLoggedIn={setIsLoggedIn} />}
+          </Route>
+          <PrivateRoute path="/" isLoggedIn={isLoggedIn}>
+            <Navbar />
+              <Switch>
+                <Route exact path="/home">
+                  <Home />
+                </Route>
+                <Route exact path="/information">
+                  <Information />
+                </Route>
+                <Route>
+                  <Redirect to="/home" />
+                </Route>
+              </Switch>
+            <Footer />
+          </PrivateRoute>
+        </Switch>
+      </div>
     </Router>
   );
 };
@@ -81,9 +83,5 @@ const PrivateRoute = ({ children, isLoggedIn, ...rest }) => (
     }
   />
 );
-
-
-
-
 
 export default App;

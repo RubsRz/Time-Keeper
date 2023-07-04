@@ -35,20 +35,16 @@ const register = async(req, res) => {
 
 const login = async(req, res) => {
     const { email, password } = req.body;
-
     try {
         // Buscar al usuario en la base de datos
         const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [
             email,
         ]);
-
         if (rows.length === 0) {
             return res.status(401).json({ message: "Credenciales inválidas" });
         }
-
         // Verificar si la contraseña coincide con el hash almacenado
         const passwordMatch = await bcrypt.compare(password, rows[0].password);
-
         if (passwordMatch) {
             // Generar el token JWT
             const token = jwt.sign({ id: rows[0].iduser, email }, "secret-key", {
