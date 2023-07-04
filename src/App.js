@@ -1,78 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import Login from './components/login/login';
-import Register from './components/register/register';
+import axios from 'axios';
+import Loader from './components/loader/loader';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 import Home from './components/home/home';
 import Information from './components/information/information';
+import Login from './components/login/login';
+import Register from './components/register/register';
 
-const AuthWrapper = () => {
+const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Verificar si el token está presente en localStorage al cargar el componente
-    const token = localStorage.getItem('token');
+    const checkToken = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+            setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error('Error al verificar el token:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    if (token) {
-      setIsLoggedIn(true);
-    }
+    checkToken();
   }, []);
+
+  if (loading) {
+    // Mostrar un indicador de carga mientras se verifica el token
+    return <Loader/>
+  }
 
   return (
     <Router>
-      <Route
-        render={({ location }) => {
-          if (location.pathname === '/login' || location.pathname === '/register') {
-            return null;
-          }
-          return <Navbar />;
-        }}
-      />
-
       <Switch>
-        <Route exact path="/">
-          <Redirect to="/login" />
-        </Route>
         <Route exact path="/login">
-          {isLoggedIn ? (
-            <Redirect to="/home" />
-          ) : (
-            <Login setIsLoggedIn={setIsLoggedIn} />
-          )}
+          {isLoggedIn ? <Redirect to="/home" /> : <Login setIsLoggedIn={setIsLoggedIn} />}
         </Route>
         <Route exact path="/register">
-          {isLoggedIn ? (
-            <Redirect to="/home" />
-          ) : (
-            <Register setIsLoggedIn={setIsLoggedIn} />
-          )}
+          {isLoggedIn ? <Redirect to="/home" /> : <Register setIsLoggedIn={setIsLoggedIn} />}
         </Route>
-        <Route exact path="/home">
-          {isLoggedIn ? <Home /> : <Redirect to="/login" />}
-        </Route>
-        <Route exact path="/information">
-          {isLoggedIn ? <Information /> : <Redirect to="/login" />}
-        </Route>
-        <Route>
-          <Redirect to="/" />
-        </Route>
+        <PrivateRoute path="/" isLoggedIn={isLoggedIn}>
+          <Navbar />
+          <Switch>
+            <Route exact path="/home">
+              <Home />
+            </Route>
+            <Route exact path="/information">
+              <Information />
+            </Route>
+            <Route>
+              <Redirect to="/home" />
+            </Route>
+          </Switch>
+          <Footer />
+        </PrivateRoute>
       </Switch>
-
-      <Route
-        render={({ location }) => {
-          if (location.pathname === '/login' || location.pathname === '/register') {
-            return null;
-          }
-          return <Footer />;
-        }}
-      />
     </Router>
   );
 };
 
-const App = () => {
-  return <AuthWrapper />;
-};
+const PrivateRoute = ({ children, isLoggedIn, ...rest }) => (
+  <Route
+    {...rest}
+    render={({ location }) =>
+      isLoggedIn ? (
+        children
+      ) : (
+        <Redirect
+          to={{
+            pathname: '/login',
+            state: { from: location },
+          }}
+        />
+      )
+    }
+  />
+);
+
+
+
+
 
 export default App;
