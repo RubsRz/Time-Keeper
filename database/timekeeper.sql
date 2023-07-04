@@ -27,6 +27,10 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `bosses`
 --
 
+DROP DATABASE IF EXISTS timekeeper;
+CREATE DATABASE timekeeper;
+USE timekeeper;
+
 CREATE TABLE `bosses` (
   `idboss` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,

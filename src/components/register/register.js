@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import styles from './register.module.css';
-import {url} from '../../config'
+import { url } from '../../config';
 
 function Register({ setIsLoggedIn }) {
   const [email, setEmail] = useState('');
@@ -28,11 +28,13 @@ function Register({ setIsLoggedIn }) {
   return (
     <div className={styles.panel}>
       <div className={styles.state}>
-        {/* ...resto del código del componente Register */}
+        <br />
+        <i className={`fa fa-user-plus ${styles.icon}`}></i>
+        <br />
+        <h1>Register</h1>
       </div>
       <div className={styles.form}>
         <form onSubmit={handleSubmit}>
-          {/* Campos de entrada del formulario */}
           <input
             type="text"
             placeholder="Email"
@@ -48,13 +50,14 @@ function Register({ setIsLoggedIn }) {
           <button type="submit">Register</button>
         </form>
       </div>
-      {/* ...resto del código del componente Register */}
+      <div className={styles.fack}>
+        <a href="/login"><i className={`fa fa-question-circle ${styles.icon}`}></i>Already have an account?</a>
+      </div>
     </div>
   );
 }
 
 export default Register;
-
 
 
 
