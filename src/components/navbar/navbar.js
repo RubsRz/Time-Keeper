@@ -1,5 +1,7 @@
 import React from "react";
 // import { useHistory } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
 //   const history = useHistory();
@@ -33,7 +35,7 @@ const Navbar = () => {
               <a className="nav-link" href="#">Contact</a>
             </li>
           </ul>
-          <button className="btn btn-danger ms-auto" onClick={handleLogout}>Log Out</button>
+          <button className="btn btn-danger ms-auto" onClick={handleLogout}><FontAwesomeIcon icon={faRightFromBracket}/> Log Out</button>
         </div>
       </div>
     </nav>
