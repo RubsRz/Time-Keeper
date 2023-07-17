@@ -1,5 +1,5 @@
 const express = require('express');
-const { register, login, getuser } = require('../controllers/authController');
+const { register, login, getuser, forgotPassword, resetPassword } = require('../controllers/authController');
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
@@ -9,6 +9,10 @@ router.post('/register', register);
 
 // Ruta para iniciar sesión
 router.post('/login', login);
+
+router.post('/forgot-password', forgotPassword)
+
+router.post('/reset-password', resetPassword)
 
 // Ruta para obtener información de usuario (requiere token de autenticación)
 router.get('/user', verifyToken, getuser);
