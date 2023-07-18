@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { url } from '../../config';
-import { Modal,Button } from 'react-bootstrap';
+import { Modal,Button, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit,faTrash,faSave } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { text } from '@fortawesome/fontawesome-svg-core';
 
 const Home = () => {
   // CONSTANTES Y HOOKS PARA MODAL Y HORARIOS
@@ -89,35 +90,102 @@ const Home = () => {
       //[event.target.name]: event.target.value,
     });
   };
+  const validarHoras=(starttime,endtime)=>{
+  const startTimeObj = new Date(`1970-01-01T${starttime}`);
+  const endTimeObj = new Date(`1970-01-01T${endtime}`);
+  const diffInMs = endTimeObj - startTimeObj;
+  console.log(startTimeObj);
+  console.log(endTimeObj);
+  console.log(diffInMs);
+  const diffInHours = diffInMs / (1000 * 60 * 60);
+  if (diffInHours < 0) {
+    //throw new Alert('La diferencia entre las horas debe ser mayor a 6 horas');
+    return 0;
+  } else if(diffInHours<6&& diffInHours>0){
+    return 1;
+  }else if(diffInHours>8.5){
+    return 2;
+  }else{
+    return 3;
+  }
+
+  }
   
   // Define una función para manejar el envío del formulario del modal
-  const handleModalFormSubmit = (event) => {
-    event.preventDefault();
-    console.log(modalFormData.idschedule);
-    console.log(modalFormData.starttime);
-    console.log(modalFormData.endtime)
-    // Realiza acciones adicionales según tus necesidades, como enviar los datos al servidor
-    //FALTA AGREGAR FUNCIONALIDAD
-    // const updateSchedule =async()=>{
-    //   const response = await axios.put(url+'/schedules/updateByName')
-    // }
-    // try {
+  const handleModalFormSubmit = async() => {
+    try {
       
-    // } catch (error) {
-      
-    // }
-    Swal.fire({
-      title:'Guardando cambios...',
-      allowOutsideClick:false,
-      didOpen:()=>{
-        Swal.showLoading();
-      },
+      if(!modalFormData.starttime && !modalFormData.endtime){
+        Swal.fire({ 
+          title:'No se modificaron datos',
+          icon:'warning'}
+        )
+      } else{
+        if(!modalFormData.starttime){
+          modalFormData.starttime=selectedSchedule.starttime;
+        }
+        if(!modalFormData.endtime){
+          modalFormData.endtime=selectedSchedule.endtime;
+        }
+        const resHoras = validarHoras(modalFormData.starttime,modalFormData.endtime);
+        if(resHoras===0){
+          Swal.fire({
+            title:'Horas incorrectas',
+            text:'Las horas no corresponden, escriba las horas correctamente',
+            icon:'error'
+          })
+        }else if(resHoras===1){
+          Swal.fire({
+            title:'Horario menor al permitido',
+            text:'Las horas de trabajo deben ser mayores a 6 horas',
+            icon:'info'
+          })        
+        }else if(resHoras===2){
+          Swal.fire({
+            title:'Horario excedido',
+            text:'Las horas de trabajo no deben ser mayores a 8 horas',
+            icon:'warning'
+          }) 
+        }else{
+
+          console.log(modalFormData.idschedule);
+          console.log(modalFormData.starttime);
+          console.log(modalFormData.endtime)
+          var idSchedule = modalFormData.idschedule;
+          //FALTA AGREGAR FUNCIONALIDAD
+          const response= await axios.put(url+`/schedules/updateSchedule/${idSchedule}`,modalFormData);
+          console.log(response);
+          Swal.fire({
+            title:'Guardando cambios...',
+            allowOutsideClick:false,
+            didOpen:()=>{
+              Swal.showLoading();
+            },
+          });
+          setTimeout(()=>{
+            Swal.close();
+            Swal.fire({
+              title: 'Cambios guardados exitosamente',
+              icon: 'success',
+            });
+            setModalOpen(false);
+          },2000);
+          handleModalClose();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }  
+  };
+  const handleModalClose=()=>{
+    setModalOpen(false);
+    setModalFormData({
+      starttime:'',
+      endtime:'',
+      idschedule:'',
     });
-    setTimeout(()=>{
-      Swal.close();
-      setModalOpen(false);
-    },2000);
-    
+    setEndTime('');
+    setStartTime('');
   };
   return (
     <>
@@ -217,7 +285,7 @@ const Home = () => {
 
     </div>
     
-    <Modal show={modalOpen} onHide={()=>setModalOpen(false)}>
+    <Modal show={modalOpen} onHide={handleModalClose}>
       <Modal.Header closeButton>
         <Modal.Title/> <b>EDITAR</b>
       </Modal.Header>
@@ -244,7 +312,7 @@ const Home = () => {
     </form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="success" type="submit" onClick={handleModalFormSubmit}>Guardar <FontAwesomeIcon icon={faSave}/></Button>
+        <Button variant="success" type="submit" onClick={()=>handleModalFormSubmit()}>Guardar <FontAwesomeIcon icon={faSave}/></Button>
       </Modal.Footer>
     </Modal>
     

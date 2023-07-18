@@ -18,5 +18,18 @@ const getSchedules = async(req, res)=>{
         res.status(500).json({message:"Error al obtener los usuarios"+ error});
     }
 };
+const updateSchedules = async(req,res)=>{
+    try {
+        const {idschedule,starttime,endtime}=req.body;
+        const query ='UPDATE schedules SET starttime =?, endtime=? where idschedule=?';
+        const values = [starttime,endtime,idschedule];
+        //console.log(idschedule,' ',starttime,' ',endtime);
+        //console.log(req.body)
+        const response = await pool.query(query,values);
+        res.status(200).json({success:true, message:'Horario actualizado con éxito'});
+    } catch (error) {
+        console.log(error,'No se pudo actualizar el horario')
+    }
+};
 
-module.exports={getSchedules};
+module.exports={getSchedules,updateSchedules};
