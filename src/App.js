@@ -5,9 +5,11 @@ import Loader from './components/loader/loader';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
 import Home from './components/home/home';
+import AddSchedule from './components/addSchedule/addSchedule';
 import Information from './components/information/information';
 import Login from './components/login/login';
 import Register from './components/register/register';
+import CreateSchedule from './components/createSchedule/createSchedule';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -53,6 +55,12 @@ const App = () => {
                 </Route>
                 <Route exact path="/information">
                   <Information />
+                </Route>
+                <Route exact path="/addSchedule">
+                  <AddSchedule />
+                </Route>
+                <Route exact path="/createSchedule">
+                  <CreateSchedule/>
                 </Route>
                 <Route>
                   <Redirect to="/home" />

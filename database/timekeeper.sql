@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 05-06-2023 a las 02:32:52
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.2.4
+-- Tiempo de generación: 28-07-2023 a las 18:22:47
+-- Versión del servidor: 10.4.27-MariaDB
+-- Versión de PHP: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -26,10 +26,6 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `bosses`
 --
-
-DROP DATABASE IF EXISTS timekeeper;
-CREATE DATABASE timekeeper;
-USE timekeeper;
 
 CREATE TABLE `bosses` (
   `idboss` int(11) NOT NULL,
@@ -88,7 +84,8 @@ CREATE TABLE `employees` (
 
 INSERT INTO `employees` (`idemployee`, `name`, `lastname`, `idboss`, `iduser`) VALUES
 (1, 'Oscar', 'Prieto', 1, 2),
-(2, 'Montserrat', 'Hernández', 1, 3);
+(2, 'Montserrat', 'Hernández', 1, 3),
+(3, 'Ruben', 'Rodriguez', 1, 4);
 
 -- --------------------------------------------------------
 
@@ -98,8 +95,6 @@ INSERT INTO `employees` (`idemployee`, `name`, `lastname`, `idboss`, `iduser`) V
 
 CREATE TABLE `schedules` (
   `idschedule` int(11) NOT NULL,
-  `startdate` date NOT NULL,
-  `enddate` date NOT NULL,
   `starttime` time NOT NULL,
   `endtime` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -108,10 +103,12 @@ CREATE TABLE `schedules` (
 -- Volcado de datos para la tabla `schedules`
 --
 
-INSERT INTO `schedules` (`idschedule`, `startdate`, `enddate`, `starttime`, `endtime`) VALUES
-(1, '2023-06-01', '2023-06-30', '09:00:00', '17:00:00'),
-(2, '2023-06-01', '2023-06-30', '08:30:00', '16:30:00'),
-(3, '2023-06-01', '2023-06-30', '10:00:00', '18:00:00');
+INSERT INTO `schedules` (`idschedule`, `starttime`, `endtime`) VALUES
+(1, '01:00:00', '09:00:00'),
+(2, '09:00:00', '16:30:00'),
+(4, '21:00:00', '17:00:00'),
+(5, '03:00:00', '11:00:00'),
+(6, '07:00:00', '15:00:00');
 
 -- --------------------------------------------------------
 
@@ -122,16 +119,21 @@ INSERT INTO `schedules` (`idschedule`, `startdate`, `enddate`, `starttime`, `end
 CREATE TABLE `sched_emp` (
   `idsched_emp` int(11) NOT NULL,
   `idschedule` int(11) DEFAULT NULL,
-  `id_employee` int(11) DEFAULT NULL
+  `id_employee` int(11) DEFAULT NULL,
+  `startdate` date DEFAULT NULL,
+  `enddate` date DEFAULT NULL,
+  `restday` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `sched_emp`
 --
 
-INSERT INTO `sched_emp` (`idsched_emp`, `idschedule`, `id_employee`) VALUES
-(1, 1, 1),
-(2, 2, 2);
+INSERT INTO `sched_emp` (`idsched_emp`, `idschedule`, `id_employee`, `startdate`, `enddate`, `restday`) VALUES
+(1, 1, 1, '2023-07-01', '2023-07-07', 'Martes, Jueves'),
+(2, 2, 2, '2023-07-10', '2023-07-21', 'Jueves, Viernes'),
+(7, 6, 3, NULL, NULL, '[\"Miércoles\",\"Domingo\"]'),
+(8, 4, 2, NULL, NULL, '[\"Miércoles\",\"Lunes\"]');
 
 -- --------------------------------------------------------
 
@@ -143,17 +145,19 @@ CREATE TABLE `users` (
   `iduser` int(11) NOT NULL,
   `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `is_boss` tinyint(1) DEFAULT NULL
+  `is_boss` tinyint(1) DEFAULT NULL,
+  `reset_code` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`iduser`, `email`, `password`, `is_boss`) VALUES
-(1, 'alvaroh@gmail.com', '$2a$12$Ex2qeGtSi9HNXN4Vv9yoO.28XmAeT5nJ1C63v/1yJ3yFkraA7Q7/.', 1),
-(2, 'oscarp@gmail.com', '$2a$12$AYNffF6OKhNLZp2aMLcZTOkqgST7tlnhim5el7bZWXqTyHOeYp5Xm', 0),
-(3, 'montseh@gmail.com', '$2a$12$HUcvDVMmyK79ZOwtVkF92.ie.xOB2NcGeic/WxnUrimFVGu5Dl/da', 0);
+INSERT INTO `users` (`iduser`, `email`, `password`, `is_boss`, `reset_code`) VALUES
+(1, 'alvaroh@gmail.com', '$2a$12$Ex2qeGtSi9HNXN4Vv9yoO.28XmAeT5nJ1C63v/1yJ3yFkraA7Q7/.', 1, 'jnbi5v'),
+(2, 'oscarp@gmail.com', '$2a$12$AYNffF6OKhNLZp2aMLcZTOkqgST7tlnhim5el7bZWXqTyHOeYp5Xm', 0, NULL),
+(3, 'montseh@gmail.com', '$2a$12$HUcvDVMmyK79ZOwtVkF92.ie.xOB2NcGeic/WxnUrimFVGu5Dl/da', 0, NULL),
+(4, 'rubenr@gmail.com', '$2a$12$ziKxOrLLWLwW7.0km8mfNe8knAStop9YhQDh1wXtB6nQPiauFrG1O', 0, NULL);
 
 --
 -- Índices para tablas volcadas
@@ -221,25 +225,25 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT de la tabla `employees`
 --
 ALTER TABLE `employees`
-  MODIFY `idemployee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idemployee` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `schedules`
 --
 ALTER TABLE `schedules`
-  MODIFY `idschedule` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idschedule` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `sched_emp`
 --
 ALTER TABLE `sched_emp`
-  MODIFY `idsched_emp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idsched_emp` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `iduser` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Restricciones para tablas volcadas

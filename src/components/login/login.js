@@ -23,12 +23,32 @@ function Login({ setIsLoggedIn }) {
 
     try {
       const response = await axios.post(url + '/auth/login', { email, password });
-
+      console.log(response);
       if (response.status === 200) {
+        Swal.fire({
+          title:'Inicio de sesión correcto',
+          allowOutsideClick:false,
+          icon:'success',
+          showConfirmButton:false
+        });
+        setTimeout(()=>{
+          Swal.close();
+        },1000);
         const token = response.data.token;
         localStorage.setItem('token', token);
         setIsLoggedIn(true);
-      } else {
+      } else{
+        console.log(response.status);
+        Swal.fire({
+          title:'Inicio de sesión icorrecto',
+          text: 'Las credenciales no coinciden',
+          allowOutsideClick:false,
+          icon:'error',
+          showConfirmButton:false
+        });
+        setTimeout(()=>{
+          Swal.close();
+        },1000);
         console.log(response.data.message);
       }
     } catch (error) {

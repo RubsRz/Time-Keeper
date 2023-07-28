@@ -146,5 +146,18 @@ const getuser = async (req, res) => {
         res.status(500).json({ message: "Error al obtener los usuarios" });
     }
 };
+const getUsersUA = async(req,res)=>{
+    try {
+        const user= await pool.query(
+            `SELECT e.idemployee, e.name, e.lastname
+            from employees e
+            left join  users u on e.idemployee= u.iduser`
+        );
+        res.status(200).json(user[0]);
+        //console.log("obtiene los usuarios sin asignar")
+    } catch (error) {
+        console.log(error)
+    }
+}
 
-module.exports = { register, login, getuser, forgotPassword, resetPassword };
+module.exports = { register, login, getuser, forgotPassword, resetPassword ,getUsersUA};

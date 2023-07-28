@@ -1,0 +1,29 @@
+.react-datetime-picker {
+    /* Estilos personalizados para el campo de entrada */
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .react-datetime-picker input {
+    /* Ocultar la flecha desplegable del campo de entrada */
+    pointer-events: none;
+    user-select: none;
+  }
+  
+  .react-datetime-picker:hover input,
+  .react-datetime-picker:focus input {
+    /* Hacer que el campo de entrada cambie de estilo al pasar el cursor o enfocarlo */
+    background-color: #f5f5f5;
+  }
+  
+  .react-datetime .rdtPicker {
+    /* Ocultar el calendario al cargar la página */
+    display: none;
+  }
+  
+  .react-datetime .rdtOpen .rdtPicker {
+    /* Mostrar el calendario solo cuando se hace clic en el campo de entrada */
+    display: block;
+  }

@@ -3,9 +3,9 @@ import axios from 'axios';
 import { url } from '../../config';
 import { Modal,Button, Alert } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit,faTrash,faSave } from '@fortawesome/free-solid-svg-icons';
+import { faEdit,faTrash,faSave, faCalendarPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
-import { text } from '@fortawesome/fontawesome-svg-core';
+import format from 'date-fns/format';
 
 const Home = () => {
   // CONSTANTES Y HOOKS PARA MODAL Y HORARIOS
@@ -69,52 +69,54 @@ const Home = () => {
       idschedule:schedule.idschedule,
     });
   }
+    //añade los valores que se modificaron a la varibale ModalFormData
+    const handleModalInputChange = (event) => {
+      const {name,value}=event.target;
+      console.log(event.target.name+' '+event.target.value);
+      if(name==='starttime'){
+        setStartTime(value);
+        console.log(starttime);
+      }else if(name==='endtime'){
+        setEndTime(value);
+        console.log(endtime);
+      }
+      setModalFormData({
+        ...modalFormData,
+        [name]:value,
+        //[event.target.name]: event.target.value,
+      });
+    };
   const openModalD=(schedule)=>{
     setSelectedSchedule(schedule);
     setModalOpenD(true);
-  }
-  //añade los valores que se modificaron a la varibale ModalFormData
-  const handleModalInputChange = (event) => {
-    const {name,value}=event.target;
-    console.log(event.target.name+' '+event.target.value);
-    if(name==='starttime'){
-      setStartTime(value);
-      console.log(starttime);
-    }else if(name==='endtime'){
-      setEndTime(value);
-      console.log(endtime);
-    }
     setModalFormData({
       ...modalFormData,
-      [name]:value,
-      //[event.target.name]: event.target.value,
+      idschedule:schedule.idschedule,
     });
-  };
+  }
+  //VALIDA QUE LAS HORAS SEAN CORRESPONDIENTES
   const validarHoras=(starttime,endtime)=>{
-  const startTimeObj = new Date(`1970-01-01T${starttime}`);
-  const endTimeObj = new Date(`1970-01-01T${endtime}`);
-  const diffInMs = endTimeObj - startTimeObj;
-  console.log(startTimeObj);
-  console.log(endTimeObj);
-  console.log(diffInMs);
-  const diffInHours = diffInMs / (1000 * 60 * 60);
-  if (diffInHours < 0) {
-    //throw new Alert('La diferencia entre las horas debe ser mayor a 6 horas');
-    return 0;
-  } else if(diffInHours<6&& diffInHours>0){
-    return 1;
-  }else if(diffInHours>8.5){
-    return 2;
-  }else{
-    return 3;
+    const startTimeObj = new Date(`1970-01-01T${starttime}`);
+    const endTimeObj = new Date(`1970-01-01T${endtime}`);
+    const diffInMs = endTimeObj - startTimeObj;
+    console.log(startTimeObj);
+    console.log(endTimeObj);
+    console.log(diffInMs);
+    const diffInHours = diffInMs / (1000 * 60 * 60);
+    if (diffInHours < 0) {
+      //throw new Alert('La diferencia entre las horas debe ser mayor a 6 horas');
+      return 0;
+    } else if(diffInHours<6&& diffInHours>0){
+      return 1;
+    }else if(diffInHours>8.5){
+      return 2;
+    }else{
+      return 3;
+    }
   }
-
-  }
-  
-  // Define una función para manejar el envío del formulario del modal
+  // FUNCIÓN PARA ENVIAR A GUARDAR LOS CAMBIOS DEL HORARIO
   const handleModalFormSubmit = async() => {
     try {
-      
       if(!modalFormData.starttime && !modalFormData.endtime){
         Swal.fire({ 
           title:'No se modificaron datos',
@@ -147,14 +149,13 @@ const Home = () => {
             icon:'warning'
           }) 
         }else{
-
-          console.log(modalFormData.idschedule);
-          console.log(modalFormData.starttime);
-          console.log(modalFormData.endtime)
+          // console.log(modalFormData.idschedule);
+          // console.log(modalFormData.starttime);
+          // console.log(modalFormData.endtime)
           var idSchedule = modalFormData.idschedule;
           //FALTA AGREGAR FUNCIONALIDAD
           const response= await axios.put(url+`/schedules/updateSchedule/${idSchedule}`,modalFormData);
-          console.log(response);
+          //console.log(response);
           Swal.fire({
             title:'Guardando cambios...',
             allowOutsideClick:false,
@@ -177,6 +178,76 @@ const Home = () => {
       console.log(error);
     }  
   };
+  //FUNCIÓN PARA ELIMINAR EL HORARIO
+  const handleModalDelete= async()=>{
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: 'Esta acción no se puede deshacer',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Eliminar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Realizar la eliminación del horario aquí
+        // Puedes llamar a la función handleConfirmDelete
+        handleConfirmDelete();
+      }
+    });
+    // try {
+    //   var idSchedule = modalFormData.idschedule;
+    //   console.log(idSchedule);
+    //   const eliminar = await axios.delete(url+`/schedules/deleteSchedule/${idSchedule}`);
+    //   Swal.fire({
+    //     title:'Eliminando Horario',
+    //     allowOutsideClick:false,
+    //     didOpen:()=>{
+    //       Swal.showLoading();
+    //     },
+    //   });
+    //   setTimeout(()=>{
+    //     Swal.close();
+    //     Swal.fire({
+    //       title: 'Horario Eliminado Exitosamente',
+    //       icon: 'success',
+    //     });
+    //     setModalOpen(false);
+    //   },700);
+    //   setModalOpenD(false)
+    //   handleModalClose();
+    // } catch (error) {
+    //   console.log(error)
+    // }
+  }
+  //
+  const handleConfirmDelete=async()=>{
+    try {
+      var idSchedule = modalFormData.idschedule;
+      console.log(idSchedule);
+      const eliminar = await axios.delete(url+`/schedules/deleteSchedule/${idSchedule}`);
+      Swal.fire({
+        title:'Eliminando Horario',
+        allowOutsideClick:false,
+        didOpen:()=>{
+          Swal.showLoading();
+        },
+      });
+      setTimeout(()=>{
+        Swal.close();
+        Swal.fire({
+          title: 'Horario Eliminado Exitosamente',
+          icon: 'success',
+        });
+        setModalOpen(false);
+      },700);
+      setModalOpenD(false)
+      handleModalClose();
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  //CERRAR EL MODAL Y VACÍA LOS DATOS QUE SE GUARDAN EN MODAL FORM DATA
   const handleModalClose=()=>{
     setModalOpen(false);
     setModalFormData({
@@ -187,6 +258,7 @@ const Home = () => {
     setEndTime('');
     setStartTime('');
   };
+
   return (
     <>
     <div className="container">
@@ -235,28 +307,49 @@ const Home = () => {
       </div>
       <div className="container-fluid mb-5 pb-5">
         <div className="row justify-content-center mt-5">
+        <div className='text-right'>
+            <a className="nav-link" href="/addSchedule"><button className='btn btn-success'><FontAwesomeIcon icon={faUserTag}/> Asignar Horario</button></a>
+            <a className="nav-link" href="/createSchedule"><button className='btn btn-warning'><FontAwesomeIcon icon={faCalendarPlus}/> Crear Horario</button></a>
+          </div>
           <div className="col-md-12">
             <div className="card">
               <div className="card-body">
+               
                 <table className="table table-hover text-center">
                   <thead className="thead-dark">
                     <tr>
                       <th scope="col">Nombre</th>
                       <th scope="col">Correo</th>
+                      <th scope="col">Fecha de Inicio</th>
+                      <th scope="col">Fecha de Terminación</th>
                       <th scope="col">Hora de entrada</th>
                       <th scope="col">Hora de salida</th>
-                      <th scope="col">Acciones</th>
+                      {/* <th scope="col">Acciones</th> */}
                     </tr>
                       </thead>
                       <tbody>
                     {fetchSchedules.map(schedule=>(
                     <>
-                        <tr>
-                          <td>{schedule.name} {schedule.lastname}</td>
+                        <tr key={schedule.id}>
+                          {schedule.name && schedule.email?(
+                            <>
+                            <td>{schedule.name} {schedule.lastname}</td>
                           <td>{schedule.email}</td>
+                          <td>{format(new Date(schedule.startdate), 'dd/MM/yyyy')}</td>
+                          <td>{format(new Date(schedule.enddate), 'dd/MM/yyyy')}</td>
                           <td>{schedule.starttime}</td>
                           <td>{schedule.endtime}</td>
-                          <td>
+                            </>
+                          ):(
+                            <></>
+                          )}
+                          {/* <td>{schedule.name} {schedule.lastname}</td>
+                          <td>{schedule.email}</td>
+                          <td>{format(new Date(schedule.startdate), 'dd/MM/yyyy')}</td>
+                          <td>{format(new Date(schedule.enddate), 'dd/MM/yyyy')}</td>
+                          <td>{schedule.starttime}</td>
+                          <td>{schedule.endtime}</td>
+                          {/* <td>
                           <div className="d-flex justify-content-around">
                               <button 
                               className="btn btn-primary"
@@ -269,7 +362,7 @@ const Home = () => {
                               >Eliminar <FontAwesomeIcon icon={faTrash}/>
                               </button>
                             </div>
-                          </td>
+                          </td> */}
                         </tr>
                     </>
                     ))}
@@ -324,7 +417,7 @@ const Home = () => {
       ¿Está seguro de Eliminar el horario de <b>{selectedSchedule.name+' '+selectedSchedule.lastname}</b>?
       </Modal.Body>
       <Modal.Footer>
-      <Button variant="danger" type="submit">Eliminar <FontAwesomeIcon icon={faTrash}/></Button>
+      <Button variant="danger" onClick={()=>handleModalDelete()}>Eliminar <FontAwesomeIcon icon={faTrash}/></Button>
       </Modal.Footer>
     </Modal>
     </>
