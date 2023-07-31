@@ -6,8 +6,10 @@ import Bonos from '../general/information/bonos'
 import Vacaciones from '../general/information/vacaciones'
 import VacacionesMatrimonio from '../general/information/vacacionesMatrimonio'
 import Imss from '../general/information/imss'
+import Home from '../home/home';
 import Afore from '../general/information/afore'
 import LicenciaMaternidad from '../general/information/licenciaMaternidad'
+import CreateSchedule from '../createSchedule/createSchedule';
 
 function Information() {
   const [activeTab, setActiveTab] = useState('tab1');
@@ -72,12 +74,12 @@ function Information() {
           </div>
         </div>
         <div style={styles.content}>
-          {activeTab === 'tab1' && <Aguinaldo />}
+          {activeTab === 'tab1' && <CreateSchedule />}
           {activeTab === 'tab2' && <PrimaVacacional />}
           {activeTab === 'tab4' && <Bonos />}
           {activeTab === 'tab5' && <Vacaciones />}
           {activeTab === 'tab6' && <VacacionesMatrimonio />}
-          {activeTab === 'tab7' && <Imss />}
+          {activeTab === 'tab7' && <Home />}
           {activeTab === 'tab8' && <Afore />}
           {activeTab === 'tab9' && <LicenciaMaternidad />}
         </div>
@@ -97,20 +99,19 @@ const styles = {
   tabs: {
     width: '200px',
     backgroundColor: '#000',
-    marginTop: '1px',
-    padding: '20px 0',
+    color:"#fff",
+    paddingTop:"20px"
   },
   tab: {
     padding: '10px',
     cursor: 'pointer',
-    marginBottom: '5px',
-    backgroundColor: 'white',
+    backgroundColor: '#000',
   },
   activeTab: {
     padding: '10px',
     cursor: 'pointer',
     backgroundColor: '#8bc34a',
-    marginBottom: '5px',
+    
     color: 'white',
   },
   content: {

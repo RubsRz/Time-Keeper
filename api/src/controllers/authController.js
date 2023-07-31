@@ -48,7 +48,7 @@ const login = async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, rows[0].password);
         if (passwordMatch) {
             // Generar el token JWT
-            const token = jwt.sign({ id: rows[0].iduser, email }, "secret-key", {
+            const token = jwt.sign({ id: rows[0].iduser, email, type: rows[0].is_boss }, "secret-key", {
                 expiresIn: "1h",
             });
             res.status(200).json({ token });
@@ -140,7 +140,7 @@ const getuser = async (req, res) => {
         FROM users u
         LEFT JOIN employees e USING(iduser)
         LEFT JOIN bosses b USING(iduser)
-        WHERE u.iduser = ?;`, [req.user]);
+        WHERE u.iduser = ?;`, [req.user.id]);
         res.status(200).json({ user });
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los usuarios" });

@@ -13,7 +13,9 @@ const verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, 'secret-key');
 
     // Añadir el userId al objeto `req`
-    req.user = decoded.id;
+    req.user = decoded
+
+
 
     // Continuar con la siguiente función de middleware
     next();

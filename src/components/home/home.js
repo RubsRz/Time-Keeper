@@ -7,7 +7,7 @@ import { faEdit,faTrash,faSave, faCalendarPlus, faUserTag } from '@fortawesome/f
 import Swal from 'sweetalert2';
 import format from 'date-fns/format';
 
-const Home = () => {
+const Home = ({setProfileName}) => {
   // CONSTANTES Y HOOKS PARA MODAL Y HORARIOS
   const [user, setUser] = useState(null);
   //const [schedules_emp, setSchedules]= useState(null);
@@ -41,6 +41,7 @@ const Home = () => {
         });
         const user = response.data.user[0][0];
         setUser(user);
+        setProfileName(user.name); // Actualiza el nombre del perfil
       } catch (error) {
         console.error('Error al obtener el usuario:', error);
       }
