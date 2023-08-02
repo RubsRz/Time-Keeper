@@ -323,8 +323,8 @@ const Home = ({setProfileName}) => {
                       <th scope="col">Correo</th>
                       <th scope="col">Fecha de Inicio</th>
                       <th scope="col">Fecha de Terminación</th>
-                      <th scope="col">Hora de entrada</th>
-                      <th scope="col">Hora de salida</th>
+                      <th scope="col">Entrada / Salida</th>
+                      
                       {/* <th scope="col">Acciones</th> */}
                     </tr>
                       </thead>
@@ -338,8 +338,7 @@ const Home = ({setProfileName}) => {
                           <td>{schedule.email}</td>
                           <td>{format(new Date(schedule.startdate), 'dd/MM/yyyy')}</td>
                           <td>{format(new Date(schedule.enddate), 'dd/MM/yyyy')}</td>
-                          <td>{schedule.starttime}</td>
-                          <td>{schedule.endtime}</td>
+                          <td>{schedule.starttime.slice(0,5)} - {schedule.endtime.slice(0,5)}</td>
                             </>
                           ):(
                             <></>

@@ -12,24 +12,63 @@ const CreateSchedule = () => {
     starttime:'',
     endtime:'',
   });
+  const validarHoras=(starttime,endtime)=>{
+    const startTimeObj = new Date(`1970-01-01T${starttime}`);
+    const endTimeObj=new Date(`1970-01-01T${endtime}`);
+    const diffInMs = endTimeObj-startTimeObj;
+    const diffInHours=diffInMs/(1000*60*60);
+    if(diffInHours<0){
+      return 0;
+    }else if(diffInHours<6&&diffInHours>0){
+      return 1;
+    }else if(diffInHours>8.5){
+      return 2;
+    }else{
+      return 3;
+    }
+  }
+  const [horariosCreados,setHorariosCreados]=useState([]);
   const handleSubmit=async(e)=>{
     try {
-      const create = await axios.post(url+'/schedules/createSchedule',horario);
-      Swal.fire({
-        title:'Guardando horario...',
-        allowOutsideClick:false,
-        didOpen:()=>{
-          Swal.showLoading();
-        },
-      });
-      setTimeout(()=>{
-        Swal.close();
+      e.preventDefault();
+      const resHoras = validarHoras(horario.starttime,horario.endtime);
+      if(resHoras===0){
         Swal.fire({
-          title: 'Horario guardado correctamente',
-          icon: 'success',
+          title:'Horas incorrectas',
+          text:'Las horas no corresponden, escriba las horas correctamente',
+          icon:'error'
+        })
+      }else if(resHoras===1){
+        Swal.fire({
+          title:'Horario menor al permitido',
+          text:'Las horas de trabajo deben ser mayores a 6 horas',
+          icon:'info'
+        })        
+      }else if(resHoras===2){
+        Swal.fire({
+          title:'Horario excedido',
+          text:'Las horas de trabajo no deben ser mayores a 8 horas',
+          icon:'warning'
+        }) 
+      }else{
+
+        const create = await axios.post(url+'/schedules/createSchedule',horario);
+        Swal.fire({
+          title:'Guardando horario...',
+          allowOutsideClick:false,
+          didOpen:()=>{
+            Swal.showLoading();
+          },
         });
-        setHorario({starttime:'',endtime:''});
-      },2000);
+        setTimeout(()=>{
+          Swal.close();
+          Swal.fire({
+            title: 'Horario guardado correctamente',
+            icon: 'success',
+          });
+          setHorario({starttime:'',endtime:''});
+        },2000);
+      }
     } catch (error) {
      console.log(error);
     }
@@ -44,8 +83,18 @@ const CreateSchedule = () => {
   };
   useEffect(() => {
     //console.log(horario);
+    const getSchedulesCreated = async ()=>{
+      try {
+        //const response = await axios.get(url+'/schedules/schedulesCreated');
+        //setHorariosCreados(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getSchedulesCreated();
   }, [horario]);
   return (
+    <>
     <div className="container">
         <h1>Crear Horario</h1>
         <div className="col-md-12">
@@ -62,6 +111,34 @@ const CreateSchedule = () => {
             </div>
         </div>
     </div>
+    <div className="container">
+      <h2>Horarios Creados</h2>
+      <div className="col-md-12">
+        <div className="card">
+          <div className="card-body">
+            <table className="table table-hover text-center">
+              <thead className="thead-dark">
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Horario de Entrada</th>
+                  <th scope="col">Horario de Salida</th>
+                </tr>
+              </thead>
+              <tbody>
+                {horariosCreados.map(horario=>(
+                  <tr key={horario.idschedule}>
+                    <td>{horario.idschedule}</td>
+                    <td>{horario.starttime}</td>
+                    <td>{horario.endtime}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    </>
   );
 };
 

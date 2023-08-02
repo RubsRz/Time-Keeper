@@ -8,6 +8,7 @@ import "./addSchedule.module.css"
 import { Button } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSave } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2";
 const AddSchedule=()=>{
     const [diasSeleccionados, setDiasSeleccionados] = useState([]);
     const [user, setUser] = useState([]);
@@ -22,16 +23,34 @@ const AddSchedule=()=>{
       { id: 7, nombre: 'Domingo' }
     ];
     const [horarioDisp, setHorarioDisp]=useState([]);
+    const [startdate,setStartDate]=useState("");
+    const [enddate,setEndDate]=useState("");
     const[modalFormData,setModalFormData]=useState({
         id_employee:"",
         restday:[],
-        idschedule:""
+        idschedule:"",
+        startdate:"",
+        enddate:"",
     });
 
     const hanldeUserChange=(event)=>{
       setModalFormData({
         ...modalFormData,
         id_employee:event.target.value,
+      })
+    }
+    const hanldeStartDateChange=(event)=>{
+      setStartDate(event.target.value);
+      setModalFormData({
+        ...modalFormData,
+        startdate:event.target.value
+      })
+    }
+    const handleEndDateChange=(event)=>{
+      setEndDate(event.target.value)
+      setModalFormData({
+        ...modalFormData,
+        enddate:event.target.value
       })
     }
     const handleScheduleChange = (event)=>{
@@ -41,16 +60,37 @@ const AddSchedule=()=>{
       })
     }
     const handleModalFormSubmit=async()=>{
-      try {
-        console.log("Click en botón guardar:",modalFormData)
-        const asign = await axios.post(url+'/schedules/asignSchedule',modalFormData);
-      } catch (error) {
-        
+      if(startdate && enddate){
+        console.log(modalFormData);
+        const startDateV = new Date(startdate);
+        const endDateV = new Date(enddate);
+        const diferencia  = endDateV -startDateV;
+        const diferenciaDias = diferencia/(1000*3600*24);
+        if(diferenciaDias>7){
+            Swal.fire({
+              title:'¡Atención!',
+              text:'El horario sólo puede asignarse una semana',
+              icon:'info'
+            })
+            return;
+        }else{
+
+          try {
+            console.log("Click en botón guardar:",modalFormData)
+            const asign = await axios.post(url+'/schedules/asignSchedule',modalFormData);
+            setModalFormData("");
+            setStartDate("");
+            setEndDate("");
+          } catch (error) {
+            
+          }
+        }
       }
     }
     useEffect(() => {
+      //obtiene los horarios creados
   
-      //obtiene los horarios
+      //obtiene los horarios sin asignar
       const getSchedulesUA = async ()=>{
         try {
           const response = await axios.get(url + '/schedules/schedulesUA');
@@ -102,6 +142,7 @@ const AddSchedule=()=>{
           }
     };
     return(
+    
     <div className="container">
         <h1>Asignar Horario</h1>
         <div className="col-md-12">
@@ -146,14 +187,16 @@ const AddSchedule=()=>{
         </div>
         <div>
           <label>Escoge la fecha en al que el usuario contará con este horario</label>
-          <input type="date" value="startdate"></input>
-          <input type="date" value="enddate"></input>
+          <input type="date" value={startdate} onChange={hanldeStartDateChange}></input>
+          <input type="date" value={enddate} onChange={handleEndDateChange}></input>
         </div>
         <Button variant="success" type="submit" onClick={()=>handleModalFormSubmit()}>Guardar <FontAwesomeIcon icon={faSave}/></Button>
         </div>
     </div>
     </div>
     </div>
+
+    
     );
 };
 export default AddSchedule;

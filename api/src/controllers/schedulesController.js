@@ -3,6 +3,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/database");
 
+const getSchedulesCreated = async(req,res)=>{
+    try {
+        const schedulesCreated = await pool.query(`SELECT * FROM schedules`);
+        res.status(200).json(schedulesCreated[0]);
+    } catch (error) {
+        res.status(500).json({message:"Error al obtener los horarios creados "+error});
+    }
+}
 const getSchedules = async(req, res)=>{
     try {
         const schedules = await pool.query(
@@ -15,7 +23,7 @@ const getSchedules = async(req, res)=>{
             res.status(200).json(schedules[0]);
             
     } catch (error) {
-        res.status(500).json({message:"Error al obtener los usuarios"+ error});
+        res.status(500).json({message:"Error al obtener la relación de horarios y horarios"+ error});
     }
 };
 const getSchedulesUA=async(req,res)=>{
@@ -44,9 +52,12 @@ const asignSchedule = async (req,res)=>{
     try {
         const id_employee = req.body.id_employee;
         const restday=JSON.stringify(req.body.restday);
+        const startdate=req.body.startdate;
+        const enddate=req.body.enddate;
+        console.log(startdate +' '+ enddate)
         const idschedule=req.body.idschedule;
-        const query ='INSERT into sched_emp (id_employee,idschedule,restday) values(?,?,?);'
-        const values=[id_employee,idschedule,restday];
+        const query ='INSERT into sched_emp (id_employee,idschedule,startdate,enddate,restday) values(?,?,?,?,?);'
+        const values=[id_employee,idschedule,startdate,enddate,restday];
         const response = await pool.query(query,values);
         res.status(200).json({success:true,message:'Asignación correcta de horario'})
     } catch (error) {
@@ -75,7 +86,6 @@ const createSchedule=async(req,res)=>{
     try {
         const starttime=req.body.starttime
         const endtime=req.body.endtime
-        console.log('Se supone que aquí debería llegar el endpoint '+ starttime +' '+endtime);
         await pool.query("INSERT INTO schedules (starttime,endtime) VALUES(?,?)",[starttime,endtime]);
         res.status(200).json({message:'El horario fue creado correctamente'});
     } catch (error) {
@@ -84,4 +94,4 @@ const createSchedule=async(req,res)=>{
     }
 }
 
-module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule};
+module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule,getSchedulesCreated};
