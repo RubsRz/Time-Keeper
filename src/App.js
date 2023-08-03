@@ -12,6 +12,7 @@ import Login from './components/login/login';
 import Register from './components/register/register';
 import CreateSchedule from './components/createSchedule/createSchedule';
 import Vacations from './components/vacations/vacations';
+import Support from './components/support/support';
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -77,6 +78,9 @@ const App = () => {
                 </Route>
                 <Route exact path="/createSchedule">
                   <CreateSchedule />
+                </Route>
+                <Route exact path="/support">
+                  <Support />
                 </Route>
                 <Route>
                   <Redirect to="/home" />

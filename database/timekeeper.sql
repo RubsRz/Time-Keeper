@@ -199,7 +199,7 @@ ALTER TABLE `sched_emp`
   ADD PRIMARY KEY (`idsched_emp`),
   ADD KEY `idschedule` (`idschedule`),
   ADD KEY `id_employee` (`id_employee`);
-
+---
 --
 -- Indices de la tabla `users`
 --
