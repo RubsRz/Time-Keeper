@@ -1,5 +1,5 @@
 const express = require('express');
-const {getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule, getSchedulesCreated} = require('../controllers/schedulesController');
+const {getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule, getSchedulesCreated, bringSchedules} = require('../controllers/schedulesController');
 const { verify } = require('jsonwebtoken');
 const verifyToken = require('../middlewares/verifyToken');
 const router = express.Router();
@@ -18,4 +18,5 @@ router.delete("/deleteSchedule/:idSchedule",deleteScheduleById);
 router.post("/createSchedule",createSchedule);
 //asignar horario
 router.post("/asignSchedule",asignSchedule);
+router.get('/getSchedulesF',bringSchedules);
 module.exports = router;
