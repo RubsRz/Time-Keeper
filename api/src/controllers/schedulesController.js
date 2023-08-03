@@ -94,4 +94,12 @@ const createSchedule=async(req,res)=>{
     }
 }
 
-module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule,getSchedulesCreated};
+const bringSchedules = async(req,res) => {
+    try {
+        const Query = await pool.query('SELECT * FROM schedules');
+        res.status(200).json(Query[0]);
+    } catch (error) {
+        res.status(500).json({message:'No se pudieron obtener los horarios'});
+    }
+}
+module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule,getSchedulesCreated,bringSchedules};

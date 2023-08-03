@@ -5,6 +5,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
+import { set } from 'date-fns';
 const CreateSchedule = () => {
  
 
@@ -82,16 +83,13 @@ const CreateSchedule = () => {
     }));
   };
   useEffect(() => {
-    //console.log(horario);
-    const getSchedulesCreated = async ()=>{
-      try {
-        //const response = await axios.get(url+'/schedules/schedulesCreated');
-        //setHorariosCreados(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    getSchedulesCreated();
+    const Bhorarios = async() => {try {
+      const Respond = await axios.get(url+'/schedules/getSchedulesF');
+      setHorariosCreados(Respond.data)
+    } catch (error) {
+      console.log('',error);
+    }}
+    Bhorarios();
   }, [horario]);
   return (
     <>
@@ -125,13 +123,15 @@ const CreateSchedule = () => {
                 </tr>
               </thead>
               <tbody>
-                {horariosCreados.map(horario=>(
-                  <tr key={horario.idschedule}>
-                    <td>{horario.idschedule}</td>
-                    <td>{horario.starttime}</td>
-                    <td>{horario.endtime}</td>
-                  </tr>
-                ))}
+                {
+                  horariosCreados.map(horarioCreados => (
+                    <tr>
+                      <td>{horarioCreados.idschedule}</td>
+                      <td>{horarioCreados.starttime.slice(0,5)}</td>
+                      <td>{horarioCreados.endtime.slice(0,5)}</td>
+                    </tr>
+                  ))
+                }
               </tbody>
             </table>
           </div>
