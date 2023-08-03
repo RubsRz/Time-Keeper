@@ -10,33 +10,25 @@ const getVacations = async (req, res) => {
         const type = req.user.type;
 
         if (type == 0) {
-            var vacationsDays = 0;
-            var isBetweenVacations = false;
+            // Query para obtener las solicitudes de vacaciones actuales del empleado
+ 
+            const queryDays = await pool.query(`
+            SELECT * FROM employees
+            INNER JOIN users USING(iduser)
+            WHERE iduser = ?`, req.user.id);
+            const vacationsDays = queryDays[0][0].vacations
 
-            // Query para obtener las vacaciones actuales del empleado
             const vacations = await pool.query(`
-                SELECT vacations.*
-                FROM vacations
-                INNER JOIN employees USING(idemployee)
-                INNER JOIN users USING(iduser)
-                WHERE iduser = ? AND enddate > CURDATE()`, req.user.id);
+            SELECT v.idvacation, v.status,
+            date_format(v.startdate, "%d - %m - %Y") as startdate,
+            date_format(v.enddate, "%d - %m - %Y") as enddate
+                            FROM vacations v
+                            INNER JOIN employees USING(idemployee)
+                            INNER JOIN users USING(iduser)
+                            WHERE iduser = ? AND enddate > CURDATE()`, req.user.id);
 
-            if (vacations[0].length == 1) {
-                // NO TIENE VACACIONES ASIGNADAS, OBTENER LOS DÍAS DE VACACIONES DISPONIBLES
-                const availableVacations = await pool.query(`
-                    SELECT vacations FROM employees
-                    INNER JOIN users USING(iduser)
-                    WHERE iduser = ?`, req.user.id);
-                vacationsDays = availableVacations[0][0].vacations;
-            } else {
-                // VER SI ESTÁ DE VACACIONES HOY
-                const vacationsStartDate = moment(vacations[0][0].startdate, 'YYYY-MM-DD');
-                const vacationsEndDate = moment(vacations[0][0].enddate, 'YYYY-MM-DD');
-                const currentDate = moment(); // No es necesario pasar new Date() aquí
+            res.status(200).json({ type, vacations: vacations[0], vacationsDays});
 
-                isBetweenVacations = currentDate.isBetween(vacationsStartDate, vacationsEndDate);
-            }
-            res.status(200).json({ type, vacations: vacations[0], vacationsDays, isBetweenVacations});
         } else {
             // QUERY PARA JEFE
             const vacations = await pool.query(`SELECT vacations.*, employees.* FROM vacations
@@ -44,8 +36,6 @@ const getVacations = async (req, res) => {
             INNER JOIN users USING(iduser)
             INNER JOIN employees USING(idemployee)
             WHERE users.iduser = ? AND status = 1`, req.user.id);
-            
-            console.log(vacations[0])
         
             res.status(200).json({ type, vacations: vacations[0]});
         }
@@ -54,5 +44,38 @@ const getVacations = async (req, res) => {
     }
 }
 
+const newRequest = async (req, res) =>{
+    try {
+        const { startDate, reason, vacationsDays, } = req.body
 
-module.exports={getVacations};
+        const query = await pool.query(`SELECT * FROM employees 
+        INNER JOIN users USING(iduser)
+        WHERE iduser = ?`, req.user.id)
+        const boss = query[0][0].idboss
+        const employee = query[0][0].idemployee
+
+        let endDate = moment(startDate);
+        let daysAdded = 0;
+        while (daysAdded < vacationsDays) {
+          endDate = endDate.add(1, 'days');
+          if (endDate.day() !== 0 && endDate.day() !== 6) {
+            // Si el día no es sábado ni domingo, lo contamos
+            daysAdded++;
+          }
+        }
+        endDate = endDate.format('YYYY-MM-DD');
+
+        const result = await pool.query(
+            `INSERT INTO vacations (idemployee, idboss, startdate, enddate, status) 
+            VALUES (?, ?, ?, ?, 0)`,
+            [employee, boss, startDate, endDate]
+        );
+            
+        
+    } catch (error) {
+        res.status(500).json({ message: "Error al obtener los usuarios" + error });
+    }
+} 
+
+
+module.exports={getVacations, newRequest};
