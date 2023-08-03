@@ -19,6 +19,7 @@ const Home = ({setProfileName}) => {
   const [endtime,setEndTime]=useState('');
   const [starttime,setStartTime]=useState('');
   const [fetchSchedules,setFSchedule]=useState([]);
+  const [scheduleUser,setSUser]=useState([]);
   const[selectedSchedule,setSelectedSchedule]=useState({});
   const schedules = [
     { id: 1, day: 'Lunes', time: '9:00 AM - 5:00 PM' },
@@ -29,6 +30,7 @@ const Home = ({setProfileName}) => {
     { id: 6, day: 'Sábado', time: 'Descanso' },
     { id: 7, day: 'Domingo', time: 'Descanso' }
   ];
+  const [restDays,setRestDays]=useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,9 +41,10 @@ const Home = ({setProfileName}) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        const user = response.data.user[0][0];
-        setUser(user);
-        setProfileName(user.name); // Actualiza el nombre del perfil
+        const userO = response.data.user[0][0];
+        setUser(userO);
+        //console.log(userO.idemployee)
+        setProfileName(userO.name); // Actualiza el nombre del perfil
       } catch (error) {
         console.error('Error al obtener el usuario:', error);
       }
@@ -57,10 +60,24 @@ const Home = ({setProfileName}) => {
         console.log(error);
       }
     };
+
+    const getSchedulesByUser = async ()=>{
+      try {
+        const idUser = user.idemployee;
+        const response = await axios.get(url+`/schedules/getSchedulesByUser/${idUser}`);
+
+        setSUser(response.data);
+      } catch (error) {
+        console.log(error)
+      }
+    }
     fetchUser();
     getSchedules();
+    getSchedulesByUser();
   }, [fetchSchedules]);
-
+  const formatRestDays=(restDays)=>{
+    return restDays.join(' - ')
+  }
   //funcion para abrir el modal con los datos de donde se seleccionó el horario
   const openModalE=(schedule)=>{
     setSelectedSchedule(schedule);
@@ -267,7 +284,7 @@ const Home = ({setProfileName}) => {
         <>
         <div className="jumbotron mt-5">
           <h1 className="display-4">¡Bienvenido, {user.name}!</h1>
-          <p className="lead">Aquí tienes Los horarios horarios de la semana:</p>
+          <p className="lead">Aquí tienes tus horarios:</p>
         </div>
         <div className="row justify-content-center mt-5">
           <div className="col-md-10">
@@ -276,19 +293,17 @@ const Home = ({setProfileName}) => {
                 <table className="table table-hover text-center">
                   <thead className="thead-dark">
                     <tr>
-                      <th scope="col">Día</th>
+                      <th scope="col">Semana</th>
                       <th scope="col">Horario</th>
-                      <th scope="col">Detalles</th>
+                      <th scope="col">Dias de descanso</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {schedules.map(schedule => (
-                      <tr key={schedule.id}>
-                        <td>{schedule.day}</td>
-                        <td>{schedule.time}</td>
-                        <td>
-                          <button className="btn btn-primary">Detalles</button>
-                        </td>
+                    {scheduleUser.map(scheduleUs=>(
+                      <tr key={scheduleUs.idsched_emp}>
+                        <td>{format(new Date(scheduleUs.startdate), 'dd/MM/yyyy')} - {format(new Date(scheduleUs.enddate), 'dd/MM/yyyy')}</td>
+                        <td>{scheduleUs.starttime.slice(0,5)} - {scheduleUs.endtime.slice(0,5)}</td>
+                        <td>{formatRestDays(JSON.parse(scheduleUs.restday))}</td>
                       </tr>
                     ))}
                   </tbody>

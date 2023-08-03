@@ -134,7 +134,7 @@ const getuser = async (req, res) => {
     try {
         const user = await pool.query(
             `SELECT
-        u.iduser, u.email, u.is_boss,
+        u.iduser, u.email, u.is_boss,e.idemployee,
         IF(u.is_boss = 1, b.name, e.name) AS name,
         IF(u.is_boss = 1, b.lastname, e.lastname) AS lastname
         FROM users u

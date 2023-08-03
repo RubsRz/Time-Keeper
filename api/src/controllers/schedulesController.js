@@ -3,14 +3,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../utils/database");
 
-const getSchedulesCreated = async(req,res)=>{
-    try {
-        const schedulesCreated = await pool.query(`SELECT * FROM schedules`);
-        res.status(200).json(schedulesCreated[0]);
-    } catch (error) {
-        res.status(500).json({message:"Error al obtener los horarios creados "+error});
-    }
-}
 const getSchedules = async(req, res)=>{
     try {
         const schedules = await pool.query(
@@ -81,6 +73,19 @@ const deleteScheduleById=async(req,res)=>{
         res.status(500).json({error:'Error al eliminar el registro'});
     }
 }
+const getSchedulesByUser=async (req,res)=>{
+    try {
+        const {idUser}=req.params;
+        //console.log("Obtener los horarios del usuario con el id: ",idUser);
+        const getSBU = 'SELECT se.idsched_emp,se.startdate,se.enddate,s.starttime,s.endtime,se.restday FROM sched_emp se LEFT JOIN employees e on se.id_employee=e.idemployee LEFT JOIN schedules s on se.idschedule=s.idschedule where se.id_employee =?';
+        const response= await pool.query(getSBU,idUser);
+       // console.log(response[0])
+        res.status(200).json(response[0]);
+    } catch (error) {
+        const {idUser}=req.params;
+        res.status(500).json({error:'Error al obtener el horario del usuario:' +idUser})
+    }
+}
 
 const createSchedule=async(req,res)=>{
     try {
@@ -102,4 +107,4 @@ const bringSchedules = async(req,res) => {
         res.status(500).json({message:'No se pudieron obtener los horarios'});
     }
 }
-module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule,getSchedulesCreated,bringSchedules};
+module.exports={getSchedules,updateSchedules,deleteScheduleById,createSchedule,getSchedulesUA,asignSchedule,bringSchedules,getSchedulesByUser};
