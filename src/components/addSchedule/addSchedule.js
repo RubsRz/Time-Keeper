@@ -78,11 +78,32 @@ const AddSchedule=()=>{
           try {
             console.log("Click en botón guardar:",modalFormData)
             const asign = await axios.post(url+'/schedules/asignSchedule',modalFormData);
-            setModalFormData("");
+            Swal.fire({
+              title:'Guardando horario...',
+              allowOutsideClick:false,
+              didOpen:()=>{
+                Swal.showLoading();
+              },
+            });
+            setTimeout(()=>{
+              Swal.close();
+              Swal.fire({
+                title: 'Horario asignado correctamente',
+                icon: 'success',
+              });
+            },2000);
+            setModalFormData({
+              id_employee: "",
+              restday: [],
+              idschedule: "",
+              startdate: "",
+              enddate: "",
+            });
             setStartDate("");
             setEndDate("");
+            setDiasSeleccionados([]);
           } catch (error) {
-            
+            console.log(error);
           }
         }
       }
