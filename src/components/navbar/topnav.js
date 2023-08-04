@@ -1,10 +1,35 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { url } from '../../config';
 
-const TopNav = ({ profileName }) => {
+const TopNav = ({  }) => {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(url + '/auth/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const user = response.data.user[0][0].name;
+        setUser(user);
+      } catch (error) {
+        console.error('Error al obtener el usuario:', error);
+      }
+    };
+
+    fetchUser()
+  }, [])
+
+
+
   return (
     <div style={styles.topnav}>
       <div style={styles.logo}>Logo</div>
-      <div style={styles.profileName}>{profileName}</div>
+      <div style={styles.profileName}>{user}</div>
     </div>
   );
 };

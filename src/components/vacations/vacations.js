@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Modal } from 'react-bootstrap';
 import { url } from '../../config';
+import Swal from 'sweetalert2';
+
 
 const Vacations = () => {
+  const [user, setUser] = useState(null);
   const [vacations, setVacations] = useState([]);
-  const [vacationsDays, setVacationsDays] = useState([]);
+  const [vacationsDays, setVacationsDays] = useState();
   const [startDate, setStartDate] = useState('');
   const [reason, setReason] = useState('');
   const [showModal, setShowModal] = useState(false); // Agregamos un estado para controlar si el modal está abierto o cerrado
@@ -19,7 +22,8 @@ const Vacations = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setVacations(response.data.vacations); // Asumiendo que la API devuelve el usuario actual en "data.user"
+        setUser(response.data.type)
+        setVacations(response.data.vacations); 
         setVacationsDays(response.data.vacationsDays)
 
       } catch (error) {
@@ -55,11 +59,78 @@ const Vacations = () => {
         },
       }
       );
-
-
   };
-  
 
+  function handleAcceptClick(vacation) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Estás seguro de que quieres aceptar esta solicitud?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, aceptar'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem('token');
+        const update = await axios.post(
+          url + '/vacations/update',
+          {
+            status: 1,
+            vacation: vacation.idvacation
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+          );
+        Swal.fire(
+          'Aceptado',
+          'La solicitud ha sido aceptada.',
+          'success'
+        )
+      }
+    })
+  }
+  
+  function handleRejectClick(vacation) {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Estás seguro de que quieres rechazar esta solicitud?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, rechazar'
+    }).then(async(result) => {
+      if (result.isConfirmed) {
+
+        const token = localStorage.getItem('token');
+        const update = await axios.post(
+          url + '/vacations/update',
+          {
+            status: 2,
+            vacation: vacation.idvacation
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+          );
+
+        Swal.fire(
+          'Rechazado',
+          'La solicitud ha sido rechazada.',
+          'success'
+        )
+      }
+    })
+  }
+
+  
+if (user == 0){
   return (
     <div className="container">
       <h2>SOLICITUDES DE VACACIONES</h2>
@@ -148,6 +219,54 @@ const Vacations = () => {
       </Modal>
     </div>
   );
+  }
+  else{
+    return (
+      <div className="m-5 text-center">
+        <h2>SOLICITUDES DE VACACIONES</h2>
+    
+        <div className="col-md-12 mb-5">
+          <div className="card">
+            <div className="card-body">
+              {vacations.length === 0 ? (
+                <p>Estás al día con tus solicitudes de vacaciones.</p>
+              ) : (
+                <table className="table table-hover text-center p-5">
+                  <thead className="thead-dark">
+                    <tr>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">ID de Empleado</th>
+                      <th scope="col">Fecha de Inicio</th>
+                      <th scope="col">Fecha de Termino</th>
+                      <th scope="col">Días</th>
+                      <th scope="col">Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {vacations.map(vacation => (
+                      <tr key={vacation.idvacation}>
+                        <td>{`${vacation.name} ${vacation.lastname}`}</td>
+                        <td>0000{vacation.idemployee}</td>
+                        <td>{vacation.f_startdate}</td>
+                        <td>{vacation.f_enddate}</td>
+                        <td>{vacation.vacations}</td>
+                        <td>
+                          <button className="btn btn-success mx-1" onClick={() => handleAcceptClick(vacation)}>Aceptar</button>
+                          <button className="btn btn-danger mx-1" onClick={() => handleRejectClick(vacation)}>Rechazar</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+    
+  }
+
 }
 
 export default Vacations;

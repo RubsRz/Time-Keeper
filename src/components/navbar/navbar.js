@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import axios from 'axios';
+import { url } from '../../config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import Swal from 'sweetalert2';
 
 const Navbar = () => {
+  const [boss, setBoss] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(url + '/auth/user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const user = response.data.user[0][0].is_boss;
+        setBoss(user);
+      } catch (error) {
+        console.error('Error al obtener el usuario:', error);
+      }
+    };
+
+    fetchUser()
+  }, [])
+
   const location = useLocation();
   const path = location.pathname;
 
@@ -13,40 +36,77 @@ const Navbar = () => {
     window.location.href = '/login'; // Redirige a la página de inicio de sesión
   };
 
-  return (
-    <>
-      <div className="sidenav" style={styles.sidenav}>
-        <NavLink to="/home" style={styles.link} activeClassName="linkActive">
-          <img src="/logov1-cut.png" width={"180px"} />
-        </NavLink>
-        <ul style={styles.list}>
-          <li style={styles.listItem}>
-            <NavLink to="/home" style={path === '/home' ? styles.linkActive : styles.link}>
-              Employees
-            </NavLink>
-          </li>
-          <li style={styles.listItem}>
-          <NavLink to="/addSchedule" style={path === '/addSchedule' ? styles.linkActive : styles.link}>
-              Schedules
-            </NavLink>
-          </li>
-          <li style={styles.listItem}>
-            <NavLink to="/vacations" style={path === '/vacations' ? styles.linkActive : styles.link}>
-              Vacations
-            </NavLink>
-          </li>
-          <li style={styles.listItem}>
-          <NavLink to="/support" style={path === '/support' ? styles.linkActive : styles.link}>
-              Support
-            </NavLink>
-          </li>
-        </ul>
-        <button onClick={handleLogout} style={styles.button}>
-          <FontAwesomeIcon icon={faRightFromBracket} /> Log Out
-        </button>
-      </div>
-    </>
-  );
+
+  if (boss == 0) {
+    // navbar de empleado
+    return (
+      <>
+        <div className="sidenav" style={styles.sidenav}>
+          <NavLink to="/home" style={styles.link} activeClassName="linkActive">
+            <img src="/logov1-cut.png" width={"180px"} />
+          </NavLink>
+          <ul style={styles.list}>
+            <li style={styles.listItem}>
+              <NavLink to="/home" style={path === '/home' ? styles.linkActive : styles.link}>
+                Schedules
+              </NavLink>
+            </li>
+            <li style={styles.listItem}>
+              <NavLink to="/vacations" style={path === '/vacations' ? styles.linkActive : styles.link}>
+                Vacations
+              </NavLink>
+            </li>
+            <li style={styles.listItem}>
+            <NavLink to="/support" style={path === '/support' ? styles.linkActive : styles.link}>
+                Support
+              </NavLink>
+            </li>
+          </ul>
+          <button onClick={handleLogout} style={styles.button}>
+            <FontAwesomeIcon icon={faRightFromBracket} /> Log Out
+          </button>
+        </div>
+      </>
+    );
+  } else {
+    // navbar de jefe
+    return (
+      <>
+        <div className="sidenav" style={styles.sidenav}>
+          <NavLink to="/home" style={styles.link} activeClassName="linkActive">
+            <img src="/logov1-cut.png" width={"180px"} />
+          </NavLink>
+          <ul style={styles.list}>
+            <li style={styles.listItem}>
+              <NavLink to="/home" style={path === '/home' ? styles.linkActive : styles.link}>
+                Employees
+              </NavLink>
+            </li>
+            <li style={styles.listItem}>
+            <NavLink to="/addSchedule" style={path === '/addSchedule' ? styles.linkActive : styles.link}>
+                Schedules
+              </NavLink>
+            </li>
+            <li style={styles.listItem}>
+              <NavLink to="/vacations" style={path === '/vacations' ? styles.linkActive : styles.link}>
+                Vacations
+              </NavLink>
+            </li>
+            <li style={styles.listItem}>
+            <NavLink to="/support" style={path === '/support' ? styles.linkActive : styles.link}>
+                Support
+              </NavLink>
+            </li>
+          </ul>
+          <button onClick={handleLogout} style={styles.button}>
+            <FontAwesomeIcon icon={faRightFromBracket} /> Log Out
+          </button>
+        </div>
+      </>
+    );
+  }
+
+
 };
 
 const styles = {

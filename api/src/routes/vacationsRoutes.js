@@ -1,5 +1,5 @@
 const express = require('express');
-const { getVacations, newRequest } = require('../controllers/vacationsController');
+const { getVacations, newRequest, setUpdate } = require('../controllers/vacationsController');
 const verifyToken = require('../middlewares/verifyToken');
 
 const router = express.Router();
@@ -8,5 +8,7 @@ const router = express.Router();
 router.get('/vacations', verifyToken, getVacations);
 
 router.post('/newrequest', verifyToken, newRequest);
+
+router.post('/update', verifyToken, setUpdate);
 
 module.exports = router;

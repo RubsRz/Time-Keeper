@@ -18,6 +18,7 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [profileName, setProfileName] = useState('');
+  const [boss, setBoss] = useState('');
 
   useEffect(() => {
     const checkToken = async () => {
@@ -45,14 +46,14 @@ const App = () => {
     <Router>
       <div style={{ height: '100vh', overflowY: 'auto' }}>
         {isLoggedIn && <TopNav profileName={profileName} />}
-        {isLoggedIn && <Navbar />}
-        <div style={{ marginLeft: isLoggedIn ? '200px' : '0' }}>
+        {isLoggedIn && <Navbar boss={boss} />}
+        <div style={{ marginLeft: isLoggedIn ? '200px' : '0', marginBottom: '40px' }}>
           <Switch>
             <Route exact path="/login">
               {isLoggedIn ? (
                 <Redirect to="/home" />
               ) : (
-                <Login setIsLoggedIn={setIsLoggedIn} setProfileName={setProfileName} />
+                <Login setIsLoggedIn={setIsLoggedIn} setProfileName={setProfileName} setBoss={setBoss} />
               )}
             </Route>
             <Route exact path="/register">
@@ -65,7 +66,7 @@ const App = () => {
             <PrivateRoute path="/" isLoggedIn={isLoggedIn}>
               <Switch>
                 <Route exact path="/home">
-                  <Home setProfileName={setProfileName} />
+                  <Home setProfileName={setProfileName} setBoss={setBoss}/>
                 </Route>
                 <Route exact path="/information">
                   <Information />

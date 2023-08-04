@@ -31,11 +31,15 @@ const getVacations = async (req, res) => {
 
         } else {
             // QUERY PARA JEFE
-            const vacations = await pool.query(`SELECT vacations.*, employees.* FROM vacations
+            const vacations = await pool.query(`
+            SELECT v.*, e.*,
+            date_format(v.startdate, "%d - %m - %Y") as f_startdate,
+            date_format(v.enddate, "%d - %m - %Y") as f_enddate
+            FROM vacations v
             INNER JOIN bosses USING(idboss)
             INNER JOIN users USING(iduser)
-            INNER JOIN employees USING(idemployee)
-            WHERE users.iduser = ? AND status = 1`, req.user.id);
+            INNER JOIN employees e USING(idemployee)
+            WHERE users.iduser = ? AND status = 0`, req.user.id);
         
             res.status(200).json({ type, vacations: vacations[0]});
         }
@@ -70,12 +74,25 @@ const newRequest = async (req, res) =>{
             VALUES (?, ?, ?, ?, 0)`,
             [employee, boss, startDate, endDate]
         );
+
+        res.status(200).json();
             
         
     } catch (error) {
         res.status(500).json({ message: "Error al obtener los usuarios" + error });
     }
-} 
+}
+
+const setUpdate = async (req, res) =>{
+    const {status, vacation} = req.body
+
+    console.log(req.body)
+
+    const update = await pool.query(`UPDATE vacations SET status = ? WHERE idvacation = ?;`, [status, vacation])
+
+    res.status(200).json();
+    
+}
 
 
-module.exports={getVacations, newRequest};
+module.exports={getVacations, newRequest, setUpdate};
