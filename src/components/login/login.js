@@ -23,8 +23,8 @@ function Login({ setIsLoggedIn }) {
 
     try {
       const response = await axios.post(url + '/auth/login', { email, password });
-      console.log(response);
-      if (response.status === 200) {
+      console.log(response)
+      if (response.status == 200) {
         Swal.fire({
           title:'Inicio de sesión correcto',
           allowOutsideClick:false,
@@ -38,7 +38,6 @@ function Login({ setIsLoggedIn }) {
         localStorage.setItem('token', token);
         setIsLoggedIn(true);
       } else{
-        console.log(response.status);
         Swal.fire({
           title:'Inicio de sesión icorrecto',
           text: 'Las credenciales no coinciden',
@@ -62,7 +61,7 @@ function Login({ setIsLoggedIn }) {
 
       console.log(response.data);
 
-      if (response.status === 404) {
+      if (response.status == 201) {
         toast.error('Correo electrónico no encontrado');
       } else {
         setShowForgotPasswordModal(false);
@@ -91,7 +90,7 @@ function Login({ setIsLoggedIn }) {
 
       console.log(response.data);
 
-      if (response.status === 401) {
+      if (response.status === 201) {
         setResetPasswordError('El código de restablecimiento es incorrecto.');
       } else if (response.status === 200) {
         setShowResetPasswordModal(false);

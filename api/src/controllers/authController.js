@@ -51,9 +51,9 @@ const login = async (req, res) => {
             const token = jwt.sign({ id: rows[0].iduser, email, type: rows[0].is_boss }, "secret-key", {
                 expiresIn: "1h",
             });
-            res.status(200).json({ token });
+            return res.status(200).json({ token });
         } else {
-            res.status(401).json({ message: "Credenciales inválidas" });
+            return res.status(201).json({ message: "Credenciales inválidas" });
         }
     } catch (error) {
         console.error(error);
@@ -69,7 +69,7 @@ const forgotPassword = async (req, res) => {
         const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email]);
 
         if (rows.length === 0) {
-            return res.status(404).json({ message: "El usuario no existe" });
+            return res.status(201).json({ message: "El usuario no existe" });
         }
 
         // Generar un código de restablecimiento de contraseña
@@ -111,7 +111,7 @@ const resetPassword = async (req, res) => {
       ]);
   
       if (rows.length === 0) {
-        return res.status(401).json({ message: "Invalid email or reset code" });
+        return res.status(201).json({ message: "Invalid email or reset code" });
       }
   
       // Generar un hash de la nueva contraseña
