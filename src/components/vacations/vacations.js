@@ -58,7 +58,9 @@ const Vacations = () => {
           Authorization: `Bearer ${token}`,
         },
       }
-      );
+    );
+    setStartDate('')
+    setReason('')
   };
 
   function handleAcceptClick(vacation) {
