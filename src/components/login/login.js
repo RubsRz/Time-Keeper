@@ -39,7 +39,7 @@ function Login({ setIsLoggedIn }) {
         setIsLoggedIn(true);
       } else{
         Swal.fire({
-          title:'Inicio de sesión icorrecto',
+          title:'Inicio de sesión incorrecto',
           text: 'Las credenciales no coinciden',
           allowOutsideClick:false,
           icon:'error',
@@ -136,9 +136,9 @@ function Login({ setIsLoggedIn }) {
           <i className={`fa fa-question-circle ${styles.icon}`}></i>Forgot password?
         </a>
       </div>
-      <div className={styles.fack}>
+      {/* <div className={styles.fack}>
         <a href="/register">Create new account</a>
-      </div>
+      </div> */}
 
       {/* Modal para la opción "Forgot password" */}
       <Modal show={showForgotPasswordModal} onHide={() => setShowForgotPasswordModal(false)}>
