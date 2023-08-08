@@ -30,44 +30,65 @@ const CreateSchedule = () => {
   const [horariosCreados,setHorariosCreados]=useState([]);
   const handleSubmit=async(e)=>{
     try {
-      e.preventDefault();
-      const resHoras = validarHoras(horario.starttime,horario.endtime);
-      if(resHoras===0){
+      if(horario.starttime===''&&horario.endtime===''){
         Swal.fire({
-          title:'Horas incorrectas',
-          text:'Las horas no corresponden, escriba las horas correctamente',
+          title:'¡Atención!',
+          text:'Selecciona las horas para guardarlas',
           icon:'error'
         })
-      }else if(resHoras===1){
+      }else if (horario.starttime===''){
         Swal.fire({
-          title:'Horario menor al permitido',
-          text:'Las horas de trabajo deben ser mayores a 6 horas',
-          icon:'info'
-        })        
-      }else if(resHoras===2){
+          title:'¡Atención!',
+          text:'Formulario incompleto, selecciona las horas correctamente',
+          icon:'error'
+        })
+      }else if(horario.endtime===''){
         Swal.fire({
-          title:'Horario excedido',
-          text:'Las horas de trabajo no deben ser mayores a 8 horas',
-          icon:'warning'
-        }) 
+          title:'¡Atención!',
+          text:'Formulario incumpleto, selecciona las horas correctamente',
+          icon:'error'
+        })
       }else{
 
-        const create = await axios.post(url+'/schedules/createSchedule',horario);
-        Swal.fire({
-          title:'Guardando horario...',
-          allowOutsideClick:false,
-          didOpen:()=>{
-            Swal.showLoading();
-          },
-        });
-        setTimeout(()=>{
-          Swal.close();
+        e.preventDefault();
+        const resHoras = validarHoras(horario.starttime,horario.endtime);
+        if(resHoras===0){
           Swal.fire({
-            title: 'Horario guardado correctamente',
-            icon: 'success',
+            title:'Horas incorrectas',
+            text:'Las horas no corresponden, escriba las horas correctamente',
+            icon:'error'
+          })
+        }else if(resHoras===1){
+          Swal.fire({
+            title:'Horario menor al permitido',
+            text:'Las horas de trabajo deben ser mayores a 6 horas',
+            icon:'info'
+          })        
+        }else if(resHoras===2){
+          Swal.fire({
+            title:'Horario excedido',
+            text:'Las horas de trabajo no deben ser mayores a 8 horas',
+            icon:'warning'
+          }) 
+        }else{
+  
+          const create = await axios.post(url+'/schedules/createSchedule',horario);
+          Swal.fire({
+            title:'Guardando horario...',
+            allowOutsideClick:false,
+            didOpen:()=>{
+              Swal.showLoading();
+            },
           });
-          setHorario({starttime:'',endtime:''});
-        },2000);
+          setTimeout(()=>{
+            Swal.close();
+            Swal.fire({
+              title: 'Horario guardado correctamente',
+              icon: 'success',
+            });
+            setHorario({starttime:'',endtime:''});
+          },2000);
+        }
       }
     } catch (error) {
      console.log(error);

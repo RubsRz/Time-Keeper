@@ -60,6 +60,16 @@ const AddSchedule=()=>{
       })
     }
     const handleModalFormSubmit=async()=>{
+      if(modalFormData.id_employee==='' || modalFormData.idschedule || modalFormData.restday || modalFormData.startdate || modalFormData.enddate){
+        Swal.fire({
+          title:'¡Atención!',
+          text:'Debes de llenar todos los campos',
+          icon:'info'
+        })
+        return;
+      }else{
+        console.log("Error");
+      }
       if(startdate && enddate){
         console.log(modalFormData);
         const startDateV = new Date(startdate);
